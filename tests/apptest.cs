@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using HelloWorld;
 using NetDaemon.Daemon.Fakes;
 using Xunit;
 
@@ -21,7 +20,7 @@ public class AppTests : DaemonHostTestBase
     {
         // Add the instance of app that we run tests on
         // This need always need to be first operation
-        await AddAppInstance(new HelloWorldApp());
+        //await AddAppInstance(new HelloWorldApp());
 
         // Init the fake NetDaemon
         await InitializeFakeDaemon().ConfigureAwait(false);
