@@ -23,6 +23,7 @@ namespace NdGreenhouse.Apps.Greenhouse
         //private GhZone _currentZone;
         private GHMain _ghMain;
         private ILogger logger;
+        DateTime? lastTimetheHvacWasOpen;
         public GhProcedures(IHaContext app, ILogger logger)
         {
             _app = app;
@@ -75,6 +76,49 @@ namespace NdGreenhouse.Apps.Greenhouse
             {
                 SwitchEntity.TurnOff();
             }
+        }
+
+        private void OpenDamperIfNeeded(string hvacAction)
+        {
+            if (_ghMain != null && _ghMain.HomeThemostat != null)
+            {
+                Console.WriteLine($"the new state is {hvacAction}");
+                if (hvacAction != "idle")
+                {
+                    //SendAlert("Turning the HVAC on", $"the new state is {hvacAction}");
+                    if (lastTimetheHvacWasOpen.HasValue == false || (DateTime.Now - lastTimetheHvacWasOpen.Value).TotalHours > 4)
+                    {
+                        lastTimetheHvacWasOpen = DateTime.Now;
+                        _ghMain.HomeDamper.TurnOn();
+                        _ghMain.HomeThemostat.StateChanges.Where(t => (t.New?.Attributes?.HvacAction ?? "unknown") == "idle").FirstOrTimeout(TimeSpan.FromMinutes(30)).Subscribe(t =>
+                        {
+                            Console.WriteLine($"the new state is {(t.New?.Attributes?.HvacAction ?? "")}");
+                            SendAlert("Turning the HVAC off", $"the new state is {(t.New == null ? "Timed Out" : $"{t.New?.Attributes?.HvacAction ?? ""}")}");
+                            _ghMain.HomeDamper.TurnOff();
+
+
+                        }
+                          );
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> OpenHVACToGreenhouse()
+        {
+            if (_ghMain != null && _ghMain?.HomeThemostat != null)
+            {
+                string currentHvacAction = (_ghMain?.HomeThemostat?.EntityState?.Attributes?.HvacAction ?? "idle");
+
+                OpenDamperIfNeeded(currentHvacAction);
+
+                _ghMain.HomeThemostat.StateChanges.Where(t => (t.New?.Attributes?.HvacAction ?? "idle") != "idle").Subscribe(t =>
+                {
+                    OpenDamperIfNeeded(t.New?.Attributes?.HvacAction ?? "idle");
+                });
+            }
+
+            return true;
         }
 
         public async Task<bool> RunOneTankEmptyRunForCurrentZone()

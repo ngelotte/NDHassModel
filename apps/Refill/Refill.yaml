@@ -1,0 +1,9 @@
+refill_app:
+  class: Greenhouse.Refill
+  ActiveReservoirs:
+    - DB1
+    - DB2
+    - DB3
+    - DB4
+    - DB5
+    - DB6

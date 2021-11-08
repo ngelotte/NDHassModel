@@ -2,8 +2,9 @@ using System;
 using System.Reactive.Linq;
 using NetDaemon.Common.Reactive;
 using System.Threading.Tasks;
-using NetDaemon.HassModel.Entities;
 using System.Reactive.Threading.Tasks;
+using NetDaemon.HassModel.Entities;
+using System.Collections.Generic;
 
 // Use unique namespaces for your apps if you going to share with others to avoid
 // conflicting names
@@ -12,6 +13,37 @@ namespace NdGreenhouse.Apps.Greenhouse
 
     public static class GreenhouseExtensions
     {
+
+        public static void TurnOn(this IList<SwitchEntity>? entities)
+        {
+            if (entities != null)
+            {
+                foreach (var entitiy in entities)
+                {
+                    entitiy.TurnOn();
+                }
+            }
+        }
+
+        public static void TurnOff(this IList<SwitchEntity>? entities)
+        {
+            if (entities != null)
+            {
+                foreach (var entitiy in entities)
+                {
+                    entitiy.TurnOff();
+                }
+            }
+        }
+
+        public static bool IsOn(this EntityState? es)
+        {
+            return (es?.State ?? "Unknown") == "on";
+        }
+        public static bool IsOff(this EntityState? bse)
+        {
+            return (bse?.State ?? "Unknown") == "off";
+        }
 
         public static bool IsOn(this BinarySensorEntity bse)
         {

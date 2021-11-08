@@ -11,6 +11,8 @@ namespace NdGreenhouse
 
 		CameraEntities Camera { get; }
 
+		ClimateEntities Climate { get; }
+
 		DeviceTrackerEntities DeviceTracker { get; }
 
 		InputBooleanEntities InputBoolean { get; }
@@ -45,6 +47,7 @@ namespace NdGreenhouse
 		public AutomationEntities Automation => new(_haContext);
 		public BinarySensorEntities BinarySensor => new(_haContext);
 		public CameraEntities Camera => new(_haContext);
+		public ClimateEntities Climate => new(_haContext);
 		public DeviceTrackerEntities DeviceTracker => new(_haContext);
 		public InputBooleanEntities InputBoolean => new(_haContext);
 		public InputNumberEntities InputNumber => new(_haContext);
@@ -214,6 +217,17 @@ namespace NdGreenhouse
 		public CameraEntity Octoprint => new(_haContext, "camera.octoprint");
 	}
 
+	public class ClimateEntities
+	{
+		private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
+		public ClimateEntities(NetDaemon.HassModel.Common.IHaContext haContext)
+		{
+			_haContext = haContext;
+		}
+
+		public ClimateEntity Home => new(_haContext, "climate.home");
+	}
+
 	public class DeviceTrackerEntities
 	{
 		private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
@@ -343,6 +357,7 @@ namespace NdGreenhouse
 		public SensorEntity GreenhouseTemp => new(_haContext, "sensor.greenhouse_temp");
 		public SensorEntity Hacs => new(_haContext, "sensor.hacs");
 		public SensorEntity HomeAssistantBeansStationStatus => new(_haContext, "sensor.home_assistant_beans_station_status");
+		public SensorEntity IndoorTemperature => new(_haContext, "sensor.indoor_temperature");
 		public SensorEntity LocalIp => new(_haContext, "sensor.local_ip");
 		public SensorEntity MonthlyEnergy => new(_haContext, "sensor.monthly_energy");
 		public SensorEntity MotoGStylusAudioSensor => new(_haContext, "sensor.moto_g_stylus_audio_sensor");
@@ -366,14 +381,10 @@ namespace NdGreenhouse
 		public SensorEntity NftTemp => new(_haContext, "sensor.nft_temp");
 		public SensorEntity NftWaterLevelState => new(_haContext, "sensor.nft_water_level_state");
 		public SensorEntity NftWaterLevelState2 => new(_haContext, "sensor.nft_water_level_state_2");
-		public SensorEntity OctoprintActualBedTemp => new(_haContext, "sensor.octoprint_actual_bed_temp");
-		public SensorEntity OctoprintActualTool0Temp => new(_haContext, "sensor.octoprint_actual_tool0_temp");
 		public SensorEntity OctoprintCurrentState => new(_haContext, "sensor.octoprint_current_state");
+		public SensorEntity OctoprintEstimatedFinishTime => new(_haContext, "sensor.octoprint_estimated_finish_time");
 		public SensorEntity OctoprintJobPercentage => new(_haContext, "sensor.octoprint_job_percentage");
-		public SensorEntity OctoprintTargetBedTemp => new(_haContext, "sensor.octoprint_target_bed_temp");
-		public SensorEntity OctoprintTargetTool0Temp => new(_haContext, "sensor.octoprint_target_tool0_temp");
-		public SensorEntity OctoprintTimeElapsed => new(_haContext, "sensor.octoprint_time_elapsed");
-		public SensorEntity OctoprintTimeRemaining => new(_haContext, "sensor.octoprint_time_remaining");
+		public SensorEntity OctoprintStartTime => new(_haContext, "sensor.octoprint_start_time");
 		public SensorEntity OpenSprinklerFlowRate => new(_haContext, "sensor.open_sprinkler_flow_rate");
 		public SensorEntity OpenSprinklerLastRun => new(_haContext, "sensor.open_sprinkler_last_run");
 		public SensorEntity OpenSprinklerRainDelayStopTime => new(_haContext, "sensor.open_sprinkler_rain_delay_stop_time");
@@ -403,6 +414,7 @@ namespace NdGreenhouse
 		public SensorEntity OpenweathermapWeatherCode => new(_haContext, "sensor.openweathermap_weather_code");
 		public SensorEntity OpenweathermapWindBearing => new(_haContext, "sensor.openweathermap_wind_bearing");
 		public SensorEntity OpenweathermapWindSpeed => new(_haContext, "sensor.openweathermap_wind_speed");
+		public SensorEntity OutdoorTemperature => new(_haContext, "sensor.outdoor_temperature");
 		public SensorEntity PowerStrip1WifiStatus => new(_haContext, "sensor.power_strip_1_wifi_status");
 		public SensorEntity PowerStrip1WifiStatus2 => new(_haContext, "sensor.power_strip_1_wifi_status_2");
 		public SensorEntity PowerStripMidWifiStatus => new(_haContext, "sensor.power_strip_mid_wifi_status");
@@ -472,10 +484,12 @@ namespace NdGreenhouse
 		public SwitchEntity NetdaemonDehumidifierApp => new(_haContext, "switch.netdaemon_dehumidifier_app");
 		public SwitchEntity NetdaemonEnvcontrolsApp => new(_haContext, "switch.netdaemon_envcontrols_app");
 		public SwitchEntity NetdaemonGrowlightApp => new(_haContext, "switch.netdaemon_growlight_app");
+		public SwitchEntity NetdaemonHelloworldapp => new(_haContext, "switch.netdaemon_helloworldapp");
 		public SwitchEntity NetdaemonNetdaemonApp => new(_haContext, "switch.netdaemon_netdaemon_app");
 		public SwitchEntity NetdaemonNutrientsApp => new(_haContext, "switch.netdaemon_nutrients_app");
 		public SwitchEntity NetdaemonPirlightsApp => new(_haContext, "switch.netdaemon_pirlights_app");
 		public SwitchEntity NetdaemonRefillApp => new(_haContext, "switch.netdaemon_refill_app");
+		public SwitchEntity NetdaemonRefillapp => new(_haContext, "switch.netdaemon_refillapp");
 		public SwitchEntity OpenSprinklerEnabled => new(_haContext, "switch.open_sprinkler_enabled");
 		public SwitchEntity PowerStrip1Outlet1 => new(_haContext, "switch.power_strip_1_outlet_1");
 		public SwitchEntity PowerStrip1Outlet12 => new(_haContext, "switch.power_strip_1_outlet_1_2");
@@ -601,6 +615,13 @@ namespace NdGreenhouse
 		}
 	}
 
+	public record ClimateEntity : NetDaemon.HassModel.Entities.Entity<ClimateEntity, NetDaemon.HassModel.Entities.EntityState<ClimateAttributes>, ClimateAttributes>
+	{
+		public ClimateEntity(NetDaemon.HassModel.Common.IHaContext haContext, string entityId) : base(haContext, entityId)
+		{
+		}
+	}
+
 	public record DeviceTrackerEntity : NetDaemon.HassModel.Entities.Entity<DeviceTrackerEntity, NetDaemon.HassModel.Entities.EntityState<DeviceTrackerAttributes>, DeviceTrackerAttributes>
 	{
 		public DeviceTrackerEntity(NetDaemon.HassModel.Common.IHaContext haContext, string entityId) : base(haContext, entityId)
@@ -717,7 +738,7 @@ namespace NdGreenhouse
 		public string ReleaseNotes { get; init; }
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("newest_version")]
-		public DateTime NewestVersion { get; init; }
+		public string NewestVersion { get; init; }
 	}
 
 	public record CameraAttributes
@@ -730,6 +751,39 @@ namespace NdGreenhouse
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("entity_picture")]
 		public string EntityPicture { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("supported_features")]
+		public long SupportedFeatures { get; init; }
+	}
+
+	public record ClimateAttributes
+	{
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("hvac_modes")]
+		public List<string> HvacModes { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("min_temp")]
+		public long MinTemp { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("max_temp")]
+		public long MaxTemp { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("preset_modes")]
+		public List<string> PresetModes { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("current_temperature")]
+		public long CurrentTemperature { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("temperature")]
+		public long Temperature { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("hvac_action")]
+		public string HvacAction { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("preset_mode")]
+		public object PresetMode { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("friendly_name")]
+		public string FriendlyName { get; init; }
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("supported_features")]
 		public long SupportedFeatures { get; init; }
@@ -878,6 +932,9 @@ namespace NdGreenhouse
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("device_class")]
 		public string DeviceClass { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("battery_level")]
+		public long BatteryLevel { get; init; }
+
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("median")]
 		public double Median { get; init; }
 
@@ -886,9 +943,6 @@ namespace NdGreenhouse
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("last median of")]
 		public long Lastmedianof { get; init; }
-
-		[System.Text.Json.Serialization.JsonPropertyNameAttribute("battery_level")]
-		public long BatteryLevel { get; init; }
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("last mean of")]
 		public long Lastmeanof { get; init; }
@@ -910,6 +964,9 @@ namespace NdGreenhouse
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("meter_period")]
 		public string MeterPeriod { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("cron pattern")]
+		public string Cronpattern { get; init; }
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("repositories")]
 		public List<Dictionary<string, string>> Repositories { get; init; }
@@ -1061,14 +1118,14 @@ namespace NdGreenhouse
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("wind_speed")]
 		public long WindSpeed { get; init; }
 
-		[System.Text.Json.Serialization.JsonPropertyNameAttribute("attribution")]
-		public string Attribution { get; init; }
-
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("forecast")]
 		public List<Dictionary<string, string>> Forecast { get; init; }
 
 		[System.Text.Json.Serialization.JsonPropertyNameAttribute("friendly_name")]
 		public string FriendlyName { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyNameAttribute("attribution")]
+		public string Attribution { get; init; }
 	}
 
 	public record ZoneAttributes
@@ -1133,6 +1190,8 @@ namespace NdGreenhouse
 
 		LogbookServices Logbook { get; }
 
+		LyricServices Lyric { get; }
+
 		MqttServices Mqtt { get; }
 
 		NetdaemonServices Netdaemon { get; }
@@ -1148,6 +1207,8 @@ namespace NdGreenhouse
 		SceneServices Scene { get; }
 
 		ScriptServices Script { get; }
+
+		ShoppingListServices ShoppingList { get; }
 
 		SwitchServices Switch { get; }
 
@@ -1190,6 +1251,7 @@ namespace NdGreenhouse
 		public InputSelectServices InputSelect => new(_haContext);
 		public InputTextServices InputText => new(_haContext);
 		public LogbookServices Logbook => new(_haContext);
+		public LyricServices Lyric => new(_haContext);
 		public MqttServices Mqtt => new(_haContext);
 		public NetdaemonServices Netdaemon => new(_haContext);
 		public NotifyServices Notify => new(_haContext);
@@ -1198,6 +1260,7 @@ namespace NdGreenhouse
 		public RecorderServices Recorder => new(_haContext);
 		public SceneServices Scene => new(_haContext);
 		public ScriptServices Script => new(_haContext);
+		public ShoppingListServices ShoppingList => new(_haContext);
 		public SwitchServices Switch => new(_haContext);
 		public SystemLogServices SystemLog => new(_haContext);
 		public TemplateServices Template => new(_haContext);
@@ -1263,11 +1326,13 @@ namespace NdGreenhouse
 
 	public record AutomationTriggerParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("skipCondition")]
 		public bool SkipCondition { get; init; }
 	}
 
 	public record AutomationTurnOffParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("stopActions")]
 		public bool StopActions { get; init; }
 	}
 
@@ -1361,22 +1426,28 @@ namespace NdGreenhouse
 
 	public record CameraPlayStreamParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("mediaPlayer")]
 		public string MediaPlayer { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("format")]
 		public string Format { get; init; }
 	}
 
 	public record CameraRecordParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("filename")]
 		public string Filename { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("duration")]
 		public long Duration { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("lookback")]
 		public long Lookback { get; init; }
 	}
 
 	public record CameraSnapshotParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("filename")]
 		public string Filename { get; init; }
 	}
 
@@ -1506,42 +1577,52 @@ namespace NdGreenhouse
 
 	public record ClimateSetAuxHeatParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("auxHeat")]
 		public bool AuxHeat { get; init; }
 	}
 
 	public record ClimateSetFanModeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("fanMode")]
 		public string FanMode { get; init; }
 	}
 
 	public record ClimateSetHumidityParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("humidity")]
 		public long Humidity { get; init; }
 	}
 
 	public record ClimateSetHvacModeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("hvacMode")]
 		public string HvacMode { get; init; }
 	}
 
 	public record ClimateSetPresetModeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("presetMode")]
 		public string PresetMode { get; init; }
 	}
 
 	public record ClimateSetSwingModeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("swingMode")]
 		public string SwingMode { get; init; }
 	}
 
 	public record ClimateSetTemperatureParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("temperature")]
 		public double Temperature { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("targetTempHigh")]
 		public double TargetTempHigh { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("targetTempLow")]
 		public double TargetTempLow { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("hvacMode")]
 		public string HvacMode { get; init; }
 	}
 
@@ -1605,14 +1686,19 @@ namespace NdGreenhouse
 
 	public record CounterConfigureParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("minimum")]
 		public long Minimum { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("maximum")]
 		public long Maximum { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("step")]
 		public long Step { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("initial")]
 		public long Initial { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("value")]
 		public long Value { get; init; }
 	}
 
@@ -1642,18 +1728,25 @@ namespace NdGreenhouse
 
 	public record DeviceTrackerSeeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("mac")]
 		public string Mac { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("devId")]
 		public string DevId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("hostName")]
 		public string HostName { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("locationName")]
 		public string LocationName { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("gps")]
 		public object Gps { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("gpsAccuracy")]
 		public long GpsAccuracy { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("battery")]
 		public long Battery { get; init; }
 	}
 
@@ -1713,16 +1806,19 @@ namespace NdGreenhouse
 
 	public record EsphomePeristalticnutrientsNutrientpump1Parameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public long Target { get; init; }
 	}
 
 	public record EsphomePeristalticnutrientsNutrientpump2Parameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public long Target { get; init; }
 	}
 
 	public record EsphomePeristalticnutrientsNutrientpump3Parameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public long Target { get; init; }
 	}
 
@@ -1757,8 +1853,10 @@ namespace NdGreenhouse
 
 	public record FrontendSetThemeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
 		public string Name { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("mode")]
 		public string Mode { get; init; }
 	}
 
@@ -1808,21 +1906,28 @@ namespace NdGreenhouse
 
 	public record GroupRemoveParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("objectId")]
 		public object ObjectId { get; init; }
 	}
 
 	public record GroupSetParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("objectId")]
 		public string ObjectId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
 		public string Name { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("icon")]
 		public string Icon { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("entities")]
 		public object Entities { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("addEntities")]
 		public object AddEntities { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("all")]
 		public bool All { get; init; }
 	}
 
@@ -1954,7 +2059,7 @@ namespace NdGreenhouse
 			_haContext.CallService("hassio", "restore_full", null, data);
 		}
 
-		public void RestoreFull(string? @slug = null, string? @password = null)
+		public void RestoreFull(string @slug, string? @password = null)
 		{
 			_haContext.CallService("hassio", "restore_full", null, new
 			{
@@ -1969,41 +2074,11 @@ namespace NdGreenhouse
 			_haContext.CallService("hassio", "restore_partial", null, data);
 		}
 
-		public void RestorePartial(bool? @homeassistant = null, object? @folders = null, object? @addons = null)
+		public void RestorePartial(string @slug, bool? @homeassistant = null, object? @folders = null, object? @addons = null, string? @password = null)
 		{
 			_haContext.CallService("hassio", "restore_partial", null, new
 			{
-			@homeassistant = @homeassistant, @folders = @folders, @addons = @addons
-			}
-
-			);
-		}
-
-		public void SnapshotFull(HassioSnapshotFullParameters data)
-		{
-			_haContext.CallService("hassio", "snapshot_full", null, data);
-		}
-
-		public void SnapshotFull(string? @name = null, string? @password = null)
-		{
-			_haContext.CallService("hassio", "snapshot_full", null, new
-			{
-			@name = @name, @password = @password
-			}
-
-			);
-		}
-
-		public void SnapshotPartial(HassioSnapshotPartialParameters data)
-		{
-			_haContext.CallService("hassio", "snapshot_partial", null, data);
-		}
-
-		public void SnapshotPartial(object? @addons = null, object? @folders = null, string? @name = null, string? @password = null)
-		{
-			_haContext.CallService("hassio", "snapshot_partial", null, new
-			{
-			@addons = @addons, @folders = @folders, @name = @name, @password = @password
+			@slug = @slug, @homeassistant = @homeassistant, @folders = @folders, @addons = @addons, @password = @password
 			}
 
 			);
@@ -2012,78 +2087,82 @@ namespace NdGreenhouse
 
 	public record HassioAddonRestartParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addon")]
 		public string Addon { get; init; }
 	}
 
 	public record HassioAddonStartParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addon")]
 		public string Addon { get; init; }
 	}
 
 	public record HassioAddonStdinParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addon")]
 		public string Addon { get; init; }
 	}
 
 	public record HassioAddonStopParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addon")]
 		public string Addon { get; init; }
 	}
 
 	public record HassioAddonUpdateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addon")]
 		public string Addon { get; init; }
 	}
 
 	public record HassioBackupFullParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
 		public string Name { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("password")]
 		public string Password { get; init; }
 	}
 
 	public record HassioBackupPartialParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("addons")]
 		public object Addons { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("folders")]
 		public object Folders { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
 		public string Name { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("password")]
 		public string Password { get; init; }
 	}
 
 	public record HassioRestoreFullParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("slug")]
 		public string Slug { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("password")]
 		public string Password { get; init; }
 	}
 
 	public record HassioRestorePartialParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("slug")]
+		public string Slug { get; init; }
+
+		[System.Text.Json.Serialization.JsonPropertyName("homeassistant")]
 		public bool Homeassistant { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("folders")]
 		public object Folders { get; init; }
 
-		public object Addons { get; init; }
-	}
-
-	public record HassioSnapshotFullParameters
-	{
-		public string Name { get; init; }
-
-		public string Password { get; init; }
-	}
-
-	public record HassioSnapshotPartialParameters
-	{
+		[System.Text.Json.Serialization.JsonPropertyName("addons")]
 		public object Addons { get; init; }
 
-		public object Folders { get; init; }
-
-		public string Name { get; init; }
-
+		[System.Text.Json.Serialization.JsonPropertyName("password")]
 		public string Password { get; init; }
 	}
 
@@ -2173,13 +2252,16 @@ namespace NdGreenhouse
 
 	public record HomeassistantReloadConfigEntryParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entryId")]
 		public string EntryId { get; init; }
 	}
 
 	public record HomeassistantSetLocationParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("latitude")]
 		public string Latitude { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("longitude")]
 		public string Longitude { get; init; }
 	}
 
@@ -2243,12 +2325,16 @@ namespace NdGreenhouse
 
 	public record InputDatetimeSetDatetimeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("date")]
 		public string Date { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("time")]
 		public DateTime Time { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("datetime")]
 		public string Datetime { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("timestamp")]
 		public long Timestamp { get; init; }
 	}
 
@@ -2293,6 +2379,7 @@ namespace NdGreenhouse
 
 	public record InputNumberSetValueParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("value")]
 		public double Value { get; init; }
 	}
 
@@ -2382,21 +2469,25 @@ namespace NdGreenhouse
 
 	public record InputSelectSelectNextParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("cycle")]
 		public bool Cycle { get; init; }
 	}
 
 	public record InputSelectSelectOptionParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("option")]
 		public string Option { get; init; }
 	}
 
 	public record InputSelectSelectPreviousParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("cycle")]
 		public bool Cycle { get; init; }
 	}
 
 	public record InputSelectSetOptionsParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("options")]
 		public object Options { get; init; }
 	}
 
@@ -2431,6 +2522,7 @@ namespace NdGreenhouse
 
 	public record InputTextSetValueParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("value")]
 		public string Value { get; init; }
 	}
 
@@ -2460,13 +2552,47 @@ namespace NdGreenhouse
 
 	public record LogbookLogParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
 		public string Name { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("domain")]
 		public string Domain { get; init; }
+	}
+
+	public class LyricServices
+	{
+		private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
+		public LyricServices(NetDaemon.HassModel.Common.IHaContext haContext)
+		{
+			_haContext = haContext;
+		}
+
+		public void SetHoldTime(NetDaemon.HassModel.Entities.ServiceTarget target, LyricSetHoldTimeParameters data)
+		{
+			_haContext.CallService("lyric", "set_hold_time", target, data);
+		}
+
+		public void SetHoldTime(NetDaemon.HassModel.Entities.ServiceTarget target, string @timePeriod)
+		{
+			_haContext.CallService("lyric", "set_hold_time", target, new
+			{
+			@time_period = @timePeriod
+			}
+
+			);
+		}
+	}
+
+	public record LyricSetHoldTimeParameters
+	{
+		[System.Text.Json.Serialization.JsonPropertyName("timePeriod")]
+		public string TimePeriod { get; init; }
 	}
 
 	public class MqttServices
@@ -2510,21 +2636,28 @@ namespace NdGreenhouse
 
 	public record MqttDumpParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("topic")]
 		public string Topic { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("duration")]
 		public long Duration { get; init; }
 	}
 
 	public record MqttPublishParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("topic")]
 		public string Topic { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("payload")]
 		public string Payload { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("payloadTemplate")]
 		public object PayloadTemplate { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("qos")]
 		public string Qos { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("retain")]
 		public bool Retain { get; init; }
 	}
 
@@ -2624,39 +2757,52 @@ namespace NdGreenhouse
 
 	public record NetdaemonEntityCreateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("state")]
 		public string State { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("icon")]
 		public string Icon { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("unit")]
 		public string Unit { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("attributes")]
 		public string Attributes { get; init; }
 	}
 
 	public record NetdaemonEntityRemoveParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 	}
 
 	public record NetdaemonEntityUpdateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("state")]
 		public string State { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("icon")]
 		public string Icon { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("unit")]
 		public string Unit { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("attributes")]
 		public string Attributes { get; init; }
 	}
 
 	public record NetdaemonRegisterServiceParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("class")]
 		public string Class { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("method")]
 		public string Method { get; init; }
 	}
 
@@ -2731,41 +2877,55 @@ namespace NdGreenhouse
 
 	public record NotifyMobileAppMotoGStylusParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("title")]
 		public string Title { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public object Target { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
 		public object Data { get; init; }
 	}
 
 	public record NotifyMobileAppSamsungflexParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("title")]
 		public string Title { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public object Target { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
 		public object Data { get; init; }
 	}
 
 	public record NotifyNotifyParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("title")]
 		public string Title { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("target")]
 		public object Target { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("data")]
 		public object Data { get; init; }
 	}
 
 	public record NotifyPersistentNotificationParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("title")]
 		public string Title { get; init; }
 	}
 
@@ -2825,20 +2985,25 @@ namespace NdGreenhouse
 
 	public record PersistentNotificationCreateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("title")]
 		public string Title { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("notificationId")]
 		public string NotificationId { get; init; }
 	}
 
 	public record PersistentNotificationDismissParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("notificationId")]
 		public string NotificationId { get; init; }
 	}
 
 	public record PersistentNotificationMarkReadParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("notificationId")]
 		public string NotificationId { get; init; }
 	}
 
@@ -2907,17 +3072,22 @@ namespace NdGreenhouse
 
 	public record RecorderPurgeParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("keepDays")]
 		public long KeepDays { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("repack")]
 		public bool Repack { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("applyFilter")]
 		public bool ApplyFilter { get; init; }
 	}
 
 	public record RecorderPurgeEntitiesParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("domains")]
 		public object Domains { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("entityGlobs")]
 		public object EntityGlobs { get; init; }
 	}
 
@@ -2982,22 +3152,28 @@ namespace NdGreenhouse
 
 	public record SceneApplyParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entities")]
 		public object Entities { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("transition")]
 		public long Transition { get; init; }
 	}
 
 	public record SceneCreateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("sceneId")]
 		public string SceneId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("entities")]
 		public object Entities { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("snapshotEntities")]
 		public object SnapshotEntities { get; init; }
 	}
 
 	public record SceneTurnOnParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("transition")]
 		public long Transition { get; init; }
 	}
 
@@ -3065,6 +3241,93 @@ namespace NdGreenhouse
 		}
 	}
 
+	public class ShoppingListServices
+	{
+		private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
+		public ShoppingListServices(NetDaemon.HassModel.Common.IHaContext haContext)
+		{
+			_haContext = haContext;
+		}
+
+		public void AddItem(ShoppingListAddItemParameters data)
+		{
+			_haContext.CallService("shopping_list", "add_item", null, data);
+		}
+
+		public void AddItem(string @name)
+		{
+			_haContext.CallService("shopping_list", "add_item", null, new
+			{
+			@name = @name
+			}
+
+			);
+		}
+
+		public void ClearCompletedItems()
+		{
+			_haContext.CallService("shopping_list", "clear_completed_items", null);
+		}
+
+		public void CompleteAll()
+		{
+			_haContext.CallService("shopping_list", "complete_all", null);
+		}
+
+		public void CompleteItem(ShoppingListCompleteItemParameters data)
+		{
+			_haContext.CallService("shopping_list", "complete_item", null, data);
+		}
+
+		public void CompleteItem(string @name)
+		{
+			_haContext.CallService("shopping_list", "complete_item", null, new
+			{
+			@name = @name
+			}
+
+			);
+		}
+
+		public void IncompleteAll()
+		{
+			_haContext.CallService("shopping_list", "incomplete_all", null);
+		}
+
+		public void IncompleteItem(ShoppingListIncompleteItemParameters data)
+		{
+			_haContext.CallService("shopping_list", "incomplete_item", null, data);
+		}
+
+		public void IncompleteItem(string @name)
+		{
+			_haContext.CallService("shopping_list", "incomplete_item", null, new
+			{
+			@name = @name
+			}
+
+			);
+		}
+	}
+
+	public record ShoppingListAddItemParameters
+	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+		public string Name { get; init; }
+	}
+
+	public record ShoppingListCompleteItemParameters
+	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+		public string Name { get; init; }
+	}
+
+	public record ShoppingListIncompleteItemParameters
+	{
+		[System.Text.Json.Serialization.JsonPropertyName("name")]
+		public string Name { get; init; }
+	}
+
 	public class SwitchServices
 	{
 		private readonly NetDaemon.HassModel.Common.IHaContext _haContext;
@@ -3120,10 +3383,13 @@ namespace NdGreenhouse
 
 	public record SystemLogWriteParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("level")]
 		public string Level { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("logger")]
 		public string Logger { get; init; }
 	}
 
@@ -3187,6 +3453,7 @@ namespace NdGreenhouse
 
 	public record TimerStartParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("duration")]
 		public string Duration { get; init; }
 	}
 
@@ -3236,27 +3503,37 @@ namespace NdGreenhouse
 
 	public record TtsCloudSayParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("cache")]
 		public bool Cache { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("language")]
 		public string Language { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("options")]
 		public object Options { get; init; }
 	}
 
 	public record TtsGoogleTranslateSayParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("entityId")]
 		public string EntityId { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("message")]
 		public string Message { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("cache")]
 		public bool Cache { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("language")]
 		public string Language { get; init; }
 
+		[System.Text.Json.Serialization.JsonPropertyName("options")]
 		public object Options { get; init; }
 	}
 
@@ -3286,6 +3563,7 @@ namespace NdGreenhouse
 
 	public record UtilityMeterCalibrateParameters
 	{
+		[System.Text.Json.Serialization.JsonPropertyName("value")]
 		public string Value { get; init; }
 	}
 
@@ -3414,6 +3692,124 @@ namespace NdGreenhouse
 		}
 	}
 
+	public static class ClimateEntityExtensionMethods
+	{
+		public static void SetAuxHeat(this ClimateEntity entity, ClimateSetAuxHeatParameters data)
+		{
+			entity.CallService("set_aux_heat", data);
+		}
+
+		public static void SetAuxHeat(this ClimateEntity entity, bool @auxHeat)
+		{
+			entity.CallService("set_aux_heat", new
+			{
+			@aux_heat = @auxHeat
+			}
+
+			);
+		}
+
+		public static void SetFanMode(this ClimateEntity entity, ClimateSetFanModeParameters data)
+		{
+			entity.CallService("set_fan_mode", data);
+		}
+
+		public static void SetFanMode(this ClimateEntity entity, string @fanMode)
+		{
+			entity.CallService("set_fan_mode", new
+			{
+			@fan_mode = @fanMode
+			}
+
+			);
+		}
+
+		public static void SetHumidity(this ClimateEntity entity, ClimateSetHumidityParameters data)
+		{
+			entity.CallService("set_humidity", data);
+		}
+
+		public static void SetHumidity(this ClimateEntity entity, long @humidity)
+		{
+			entity.CallService("set_humidity", new
+			{
+			@humidity = @humidity
+			}
+
+			);
+		}
+
+		public static void SetHvacMode(this ClimateEntity entity, ClimateSetHvacModeParameters data)
+		{
+			entity.CallService("set_hvac_mode", data);
+		}
+
+		public static void SetHvacMode(this ClimateEntity entity, string? @hvacMode = null)
+		{
+			entity.CallService("set_hvac_mode", new
+			{
+			@hvac_mode = @hvacMode
+			}
+
+			);
+		}
+
+		public static void SetPresetMode(this ClimateEntity entity, ClimateSetPresetModeParameters data)
+		{
+			entity.CallService("set_preset_mode", data);
+		}
+
+		public static void SetPresetMode(this ClimateEntity entity, string @presetMode)
+		{
+			entity.CallService("set_preset_mode", new
+			{
+			@preset_mode = @presetMode
+			}
+
+			);
+		}
+
+		public static void SetSwingMode(this ClimateEntity entity, ClimateSetSwingModeParameters data)
+		{
+			entity.CallService("set_swing_mode", data);
+		}
+
+		public static void SetSwingMode(this ClimateEntity entity, string @swingMode)
+		{
+			entity.CallService("set_swing_mode", new
+			{
+			@swing_mode = @swingMode
+			}
+
+			);
+		}
+
+		public static void SetTemperature(this ClimateEntity entity, ClimateSetTemperatureParameters data)
+		{
+			entity.CallService("set_temperature", data);
+		}
+
+		public static void SetTemperature(this ClimateEntity entity, double? @temperature = null, double? @targetTempHigh = null, double? @targetTempLow = null, string? @hvacMode = null)
+		{
+			entity.CallService("set_temperature", new
+			{
+			@temperature = @temperature, @target_temp_high = @targetTempHigh, @target_temp_low = @targetTempLow, @hvac_mode = @hvacMode
+			}
+
+			);
+		}
+
+		public static void TurnOff(this ClimateEntity entity)
+		{
+			entity.CallService("turn_off");
+		}
+
+		public static void TurnOn(this ClimateEntity entity)
+		{
+			entity.CallService("turn_on");
+		}
+	}
+
 	public static class InputBooleanEntityExtensionMethods
 	{
 		public static void Toggle(this InputBooleanEntity entity)
@@ -3527,6 +3923,24 @@ namespace NdGreenhouse
 			entity.CallService("set_options", new
 			{
 			@options = @options
+			}
+
+			);
+		}
+	}
+
+	public static class LyricEntityExtensionMethods
+	{
+		public static void SetHoldTime(this ClimateEntity entity, LyricSetHoldTimeParameters data)
+		{
+			entity.CallService("set_hold_time", data);
+		}
+
+		public static void SetHoldTime(this ClimateEntity entity, string @timePeriod)
+		{
+			entity.CallService("set_hold_time", new
+			{
+			@time_period = @timePeriod
 			}
 
 			);

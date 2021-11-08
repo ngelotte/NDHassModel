@@ -11,9 +11,11 @@ namespace NdGreenhouse.Apps.Greenhouse
 
     public class GHMain
     {
+        public ClimateEntity? HomeThemostat { get; set; }
         public BinarySensorEntity? TestingZoneLow { get; set; }
         public BinarySensorEntity? TestingZoneMedium { get; set; }
         public BinarySensorEntity? TestingZoneHigh { get; set; }
+        public SwitchEntity HomeDamper { get; set; } = default!;
         public SwitchEntity MainFan { get; set; } = default!;
         public SwitchEntity? FreshWaterPump { get; set; }
         public SwitchEntity? WaterTankRefill { get; set; }
@@ -184,8 +186,9 @@ namespace NdGreenhouse.Apps.Greenhouse
 
         public GHMain GhMain()
         {
-            BinarySensorEntities bse = new BinarySensorEntities(_app);
-            SwitchEntities sw = new SwitchEntities(_app);
+            BinarySensorEntities bse = new(_app);
+            SwitchEntities sw = new(_app);
+            ClimateEntities ce = new(_app);
             GHMain gHMain = new GHMain();
             gHMain.TestingZoneLow = bse.TestZoneWaterBucketEmpty;
             gHMain.TestingZoneMedium = bse.TestZoneWaterBucketMedium;
@@ -214,6 +217,8 @@ namespace NdGreenhouse.Apps.Greenhouse
             gHMain.MediumSwampCoolerTank = new(_app, "binary_sensor.swp_res_medium");
             gHMain.HighSwampCoolerTank = new(_app, "binary_sensor.swp_res_full");
             gHMain.DumpToWastePump = new(_app, "switch.tbp1");
+            gHMain.HomeDamper = sw.PowerStrip1Outlet4;
+            gHMain.HomeThemostat = ce.Home;
             return gHMain;
         }
 
