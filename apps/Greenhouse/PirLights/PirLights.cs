@@ -20,18 +20,13 @@ namespace NdGreenhouse.Apps.Greenhouse
     {
         private IHaContext haContext { get; set; } = default!;
         private ILogger<PirLightsApp> _logger { get; set; } = default!;
-        private IScheduler scheduler { get; set; } = default!;
-        private bool HoldCurrentZoneIsRunning { get; set; } = false;
 
         public double? SunElevation { get; set; }
         public IList<SwitchEntity>? Lights { get; init; }
         public IList<SensorEntity>? PirSensors { get; set; }
         public int LeaveLightsOnForSeconds { get; set; }
 
-        public PirLightsApp(IHaContext ha, ILogger<PirLightsApp> logger) : this(ha, DefaultScheduler.Instance, logger)
-        { }
-
-        public PirLightsApp(IHaContext ha, IScheduler scheduler, ILogger<PirLightsApp> logger)
+        public PirLightsApp(IHaContext ha, ILogger<PirLightsApp> logger)
         {
             haContext = ha;
             _logger = logger;
@@ -75,7 +70,7 @@ namespace NdGreenhouse.Apps.Greenhouse
                     .Throttle(TimeSpan.FromSeconds(LeaveLightsOnForSeconds))
                     .Subscribe(e =>
                     {
-                        if (e.New.State == "off")
+                        if (e.New.IsOff())
                         {
                             _logger.LogInformation("Turning Lights Off");
                             Lights.TurnOff();
